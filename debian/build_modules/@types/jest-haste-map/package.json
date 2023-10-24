@@ -1,0 +1,6 @@
+{
+  "name": "@types/jest-haste-map",
+  "license": "MIT",
+  "main": "",
+  "types": "index.d.ts"
+}

@@ -1,0 +1,5 @@
+{
+	"name": "@types/slash",
+	"license": "MIT",
+	"types": "index.d.ts"
+}

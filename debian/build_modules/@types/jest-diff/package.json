@@ -1,0 +1,6 @@
+{
+  "name": "@types/jest-diff",
+  "license": "MIT",
+  "main": "",
+  "types": "index.d.ts"
+}

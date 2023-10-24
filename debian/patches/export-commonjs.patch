@@ -1,0 +1,24 @@
+Description: export commonjs files
+Author: Yadd <yadd@debian.org>
+Forwarded: not-needed
+Last-Update: 2023-08-12
+
+--- a/jest-snapshot-serializer-raw/package.json
++++ b/jest-snapshot-serializer-raw/package.json
+@@ -8,8 +8,14 @@
+     "jest-snapshot-serializer"
+   ],
+   "exports": {
+-    ".": "./lib/index.js",
+-    "./always": "./lib/always.js"
++    ".": {
++      "import": "./lib/index.js",
++      "require": "./lib/index.cjs"
++    },
++    "./always": {
++      "import": "./lib/always.js",
++      "require": "./lib/always.cjs"
++    }
+   },
+   "repository": "https://github.com/ikatyang/jest-snapshot-serializer-raw",
+   "homepage": "https://github.com/ikatyang/jest-snapshot-serializer-raw#readme",

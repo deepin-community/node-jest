@@ -1,0 +1,27 @@
+Description: prettier isn't available
+Author: Yadd <yadd@debian.org>
+Forwarded: not-needed
+Last-Update: 2023-05-29
+
+--- a/packages/jest-config/src/ValidConfig.ts
++++ b/packages/jest-config/src/ValidConfig.ts
+@@ -119,7 +119,7 @@
+   openHandlesTimeout: 1000,
+   passWithNoTests: false,
+   preset: 'react-native',
+-  prettierPath: '<rootDir>/node_modules/prettier',
++  prettierPath: '',
+   projects: ['project-a', 'project-b/'],
+   randomize: false,
+   reporters: [
+--- a/packages/jest-config/src/index.ts
++++ b/packages/jest-config/src/index.ts
+@@ -174,7 +174,7 @@
+     modulePathIgnorePatterns: options.modulePathIgnorePatterns,
+     modulePaths: options.modulePaths,
+     openHandlesTimeout: options.openHandlesTimeout,
+-    prettierPath: options.prettierPath,
++    prettierPath: '',
+     resetMocks: options.resetMocks,
+     resetModules: options.resetModules,
+     resolver: options.resolver,

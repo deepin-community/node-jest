@@ -1,0 +1,8 @@
+{
+  "name": "foo",
+  "version": "0.0.1",
+  "author": "Yadd <yadd@debian.org>",
+  "scripts": {
+    "test": "jest"
+  }
+}

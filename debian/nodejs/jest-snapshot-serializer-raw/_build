@@ -1,0 +1,5 @@
+mv ../node_modules/@types/jsdom ../node_modules/@types/.jsdom
+tsc -p ./tsconfig.build.json
+mjs2cjs -o lib/index.cjs lib/index.js
+mjs2cjs -o lib/always.cjs lib/always.js
+mv ../node_modules/@types/.jsdom ../node_modules/@types/jsdom

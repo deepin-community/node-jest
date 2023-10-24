@@ -1,0 +1,6 @@
+{
+  "name": "@types/jest-matcher-utils",
+  "license": "MIT",
+  "main": "",
+  "types": "index.d.ts"
+}

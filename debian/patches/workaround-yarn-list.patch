@@ -1,0 +1,20 @@
+Description: temp workaround
+Author: Yadd <yadd@debian.org>
+Forwarded: not-needed
+Last-Update: 2022-10-18
+
+--- a/scripts/buildTs.mjs
++++ b/scripts/buildTs.mjs
+@@ -18,10 +18,8 @@
+ 
+ const packagesWithTs = getPackagesWithTsConfig();
+ 
+-const {stdout: allWorkspacesString} = await execa('yarn', [
+-  'workspaces',
+-  'list',
+-  '--json',
++const {stdout: allWorkspacesString} = await execa('cat', [
++  'debian/yarn-workspaces.json',
+ ]);
+ 
+ const workspacesWithTs = new Map(

@@ -1,0 +1,25 @@
+Description: don't fail if typescript files contains references
+Author: Yadd <yadd@debian.org>
+Forwarded: not-needed
+Last-Update: 2022-10-18
+
+--- a/scripts/buildTs.mjs
++++ b/scripts/buildTs.mjs
+@@ -240,14 +240,11 @@
+       }),
+     ),
+   );
++  console.log(
++    chalk.inverse.green(' Successfully validated TypeScript definition files '),
++  );
+ } catch (e) {
+   console.error(
+     chalk.inverse.red(' Unable to validate TypeScript definition files '),
+   );
+-
+-  throw e;
+ }
+-
+-console.log(
+-  chalk.inverse.green(' Successfully validated TypeScript definition files '),
+-);

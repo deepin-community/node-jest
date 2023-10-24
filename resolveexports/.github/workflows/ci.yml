@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    paths-ignore:
+      - 'bench/**'
+      - '*.md'
+    branches:
+      - '**'
+    tags-ignore:
+      - '**'
+  pull_request:
+    paths-ignore:
+      - 'bench/**'
+      - '*.md'
+    branches:
+      - master
+
+jobs:
+  test:
+    name: Node.js v${{ matrix.nodejs }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # Node 10.x not supported by tsm & bundt
+        nodejs: [12, 14, 16, 18]
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.nodejs }}
+
+    - name: Install
+      run: |
+        npm install
+        npm install -g nyc
+
+    - name: Type Check
+      run: npm run types
+
+    - name: Test w/ Coverage
+      run: nyc --include=src npm test
+
+    - name: Compile
+      if: matrix.nodejs >= 18
+      run: npm run build
+
+    - name: Report
+      if: matrix.nodejs >= 18
+      run: |
+        nyc report --reporter=text-lcov > coverage.lcov
+        bash <(curl -s https://codecov.io/bash)
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

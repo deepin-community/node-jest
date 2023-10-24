@@ -1,0 +1,13 @@
+rm -rf dist
+(
+if mkdir node_modules; then
+	pkgjs-ln tslib
+	pkgjs-ln @types/mocha
+	ln -s ../../../debian/nodejs/bcoe-v8-coverage/node_modules/@types/node node_modules/@types/
+fi
+)
+rollup -c ../debian/bcoe-rollup-config.js
+cp ../debian/nodejs/def-bcoe-v8-coverage/* dist/lib/
+rm -rf dist/lib/src
+mv dist/lib/lib/*.js dist/lib
+rm -fr dist/lib/lib

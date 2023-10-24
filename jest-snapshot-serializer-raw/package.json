@@ -1,0 +1,47 @@
+{
+  "name": "jest-snapshot-serializer-raw",
+  "type": "module",
+  "version": "2.0.0",
+  "description": "jest snapshot serializer for reducing escapes in the snapshot file",
+  "keywords": [
+    "jest",
+    "jest-snapshot-serializer"
+  ],
+  "exports": {
+    ".": "./lib/index.js",
+    "./always": "./lib/always.js"
+  },
+  "repository": "https://github.com/ikatyang/jest-snapshot-serializer-raw",
+  "homepage": "https://github.com/ikatyang/jest-snapshot-serializer-raw#readme",
+  "author": {
+    "name": "Ika",
+    "email": "ikatyang@gmail.com",
+    "url": "https://github.com/ikatyang"
+  },
+  "license": "MIT",
+  "scripts": {
+    "prepack": "pnpm run build",
+    "lint": "prettier --check .",
+    "test": "vitest",
+    "build": "tsc -p ./tsconfig.build.json",
+    "release": "standard-version"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@vitest/coverage-v8": "0.33.0",
+    "prettier": "3.0.0",
+    "standard-version": "9.5.0",
+    "typescript": "5.1.6",
+    "vite": "4.4.4",
+    "vitest": "0.33.0"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "files": [
+    "/lib/**/*",
+    "/CHANGELOG.md",
+    "/ThirdPartyNoticeText.txt"
+  ],
+  "packageManager": "pnpm@8.6.6"
+}
