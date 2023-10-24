@@ -1,0 +1,654 @@
+Description: various workaround for typescript definitions
+Author: Yadd <yadd@debian.org>
+Forwarded: not-needed
+Last-Update: 2023-08-12
+
+--- a/packages/expect/src/asymmetricMatchers.ts
++++ b/packages/expect/src/asymmetricMatchers.ts
+@@ -267,6 +267,7 @@
+   }
+ 
+   asymmetricMatch(other: unknown) {
++// @ts-ignore
+     const result = isA<string>('String', other) && other.includes(this.sample);
+ 
+     return this.inverse ? !result : result;
+@@ -290,6 +291,7 @@
+   }
+ 
+   asymmetricMatch(other: unknown) {
++// @ts-ignore
+     const result = isA<string>('String', other) && this.sample.test(other);
+ 
+     return this.inverse ? !result : result;
+@@ -322,6 +324,7 @@
+   }
+ 
+   asymmetricMatch(other: unknown) {
++// @ts-ignore
+     if (!isA<number>('Number', other)) {
+       return false;
+     }
+@@ -332,6 +335,7 @@
+       result = true; // -Infinity - -Infinity is NaN
+     } else {
+       result =
++// @ts-ignore
+         Math.abs(this.sample - other) < Math.pow(10, -this.precision) / 2;
+     }
+     return this.inverse ? !result : result;
+--- a/packages/expect/src/index.ts
++++ b/packages/expect/src/index.ts
+@@ -53,6 +53,7 @@
+   ThrowingMatcherFn,
+ } from './types';
+ 
++// @ts-ignore
+ export type {Tester, TesterContext} from '@jest/expect-utils';
+ export {AsymmetricMatcher} from './asymmetricMatchers';
+ export type {
+--- a/packages/expect/src/matchers.ts
++++ b/packages/expect/src/matchers.ts
+@@ -935,6 +935,7 @@
+           '\n\n' +
+           printDiffOrStringify(
+             expected,
++// @ts-ignore
+             getObjectSubset(received, expected, this.customTesters),
+             EXPECTED_LABEL,
+             RECEIVED_LABEL,
+--- a/packages/jest-changed-files/src/git.ts
++++ b/packages/jest-changed-files/src/git.ts
+@@ -18,6 +18,7 @@
+   let result: execa.ExecaReturnValue;
+ 
+   try {
++// @ts-ignore
+     result = await execa('git', args, {cwd});
+   } catch (e) {
+     if (types.isNativeError(e)) {
+@@ -100,6 +101,7 @@
+     const options = ['rev-parse', '--show-cdup'];
+ 
+     try {
++// @ts-ignore
+       const result = await execa('git', options, {cwd});
+ 
+       return path.resolve(cwd, result.stdout);
+--- a/packages/jest-changed-files/src/hg.ts
++++ b/packages/jest-changed-files/src/hg.ts
+@@ -33,6 +33,7 @@
+     let result: execa.ExecaReturnValue;
+ 
+     try {
++// @ts-ignore
+       result = await execa('hg', args, {cwd, env});
+     } catch (e) {
+       if (types.isNativeError(e)) {
+@@ -52,6 +53,7 @@
+ 
+   getRoot: async cwd => {
+     try {
++// @ts-ignore
+       const result = await execa('hg', ['root'], {cwd, env});
+ 
+       return result.stdout;
+--- a/packages/jest-changed-files/src/index.ts
++++ b/packages/jest-changed-files/src/index.ts
+@@ -22,6 +22,7 @@
+ 
+ // This is an arbitrary number. The main goal is to prevent projects with
+ // many roots (50+) from spawning too many processes at once.
++// @ts-ignore
+ const mutex = pLimit(5);
+ 
+ const findGitRoot = (dir: string) => mutex(() => git.getRoot(dir));
+--- a/packages/jest-changed-files/src/sl.ts
++++ b/packages/jest-changed-files/src/sl.ts
+@@ -37,6 +37,7 @@
+     let result: execa.ExecaReturnValue;
+ 
+     try {
++// @ts-ignore
+       result = await execa('sl', args, {cwd, env});
+     } catch (e) {
+       if (types.isNativeError(e)) {
+@@ -56,6 +57,7 @@
+ 
+   getRoot: async cwd => {
+     try {
++// @ts-ignore
+       const result = await execa('sl', ['root'], {cwd, env});
+ 
+       return result.stdout;
+--- a/packages/jest-circus/src/eventHandler.ts
++++ b/packages/jest-circus/src/eventHandler.ts
+@@ -217,6 +217,7 @@
+     case 'test_retry': {
+       const logErrorsBeforeRetry: boolean =
+         // eslint-disable-next-line no-restricted-globals
++// @ts-ignore
+         global[LOG_ERRORS_BEFORE_RETRY] || false;
+       if (logErrorsBeforeRetry) {
+         event.test.retryReasons.push(...event.test.errors);
+@@ -227,7 +228,9 @@
+     case 'run_start': {
+       state.hasStarted = true;
+       /* eslint-disable no-restricted-globals */
++// @ts-ignore
+       global[TEST_TIMEOUT_SYMBOL] &&
++// @ts-ignore
+         (state.testTimeout = global[TEST_TIMEOUT_SYMBOL]);
+       /* eslint-enable */
+       break;
+--- a/packages/jest-circus/src/globalErrorHandlers.ts
++++ b/packages/jest-circus/src/globalErrorHandlers.ts
+@@ -22,6 +22,7 @@
+   parentProcess.removeAllListeners('unhandledRejection');
+   parentProcess.on('uncaughtException', uncaught);
+   parentProcess.on('unhandledRejection', uncaught);
++// @ts-ignore
+   return {uncaughtException, unhandledRejection};
+ };
+ 
+--- a/packages/jest-circus/src/run.ts
++++ b/packages/jest-circus/src/run.ts
+@@ -62,6 +62,7 @@
+ 
+   // Tests that fail and are retried we run after other tests
+   // eslint-disable-next-line no-restricted-globals
++// @ts-ignore
+   const retryTimes = parseInt(global[RETRY_TIMES], 10) || 0;
+   const deferredRetryTests = [];
+ 
+@@ -135,6 +136,7 @@
+ }
+ 
+ function startTestsConcurrently(concurrentTests: Array<ConcurrentTestEntry>) {
++// @ts-ignore
+   const mutex = pLimit(getState().maxConcurrency);
+   const testNameStorage = new AsyncLocalStorage<string>();
+   jestExpect.setState({currentConcurrentTestName: testNameStorage});
+--- a/packages/jest-circus/src/state.ts
++++ b/packages/jest-circus/src/state.ts
+@@ -39,13 +39,16 @@
+ 
+ /* eslint-disable no-restricted-globals */
+ export const resetState = (): void => {
++// @ts-ignore
+   global[STATE_SYM] = createState();
+ };
+ 
+ resetState();
+ 
++// @ts-ignore
+ export const getState = (): Circus.State => global[STATE_SYM];
+ export const setState = (state: Circus.State): Circus.State =>
++// @ts-ignore
+   (global[STATE_SYM] = state);
+ /* eslint-enable */
+ 
+--- a/packages/jest-config/src/readConfigFileAndSetRootDir.ts
++++ b/packages/jest-config/src/readConfigFileAndSetRootDir.ts
+@@ -35,6 +35,7 @@
+       configObject = await loadTSConfigFile(configPath);
+     } else if (isJSON) {
+       const fileContent = fs.readFileSync(configPath, 'utf8');
++// @ts-ignore
+       configObject = parseJson(stripJsonComments(fileContent), configPath);
+     } else {
+       configObject = await requireOrImportModule<any>(configPath);
+--- a/packages/jest-core/src/collectHandles.ts
++++ b/packages/jest-core/src/collectHandles.ts
+@@ -42,7 +42,7 @@
+ 
+ const alwaysActive = () => true;
+ 
+-// @ts-expect-error: doesn't exist in v12 typings
++// @ts-ignore: doesn't exist in v12 typings
+ const hasWeakRef = typeof WeakRef === 'function';
+ 
+ const asyncSleep = promisify(setTimeout);
+@@ -115,7 +115,7 @@
+         // Handle that supports hasRef
+         if ('hasRef' in resource) {
+           if (hasWeakRef) {
+-            // @ts-expect-error: doesn't exist in v12 typings
++            // @ts-ignore: doesn't exist in v12 typings
+             const ref = new WeakRef(resource);
+             isActive = () => {
+               return ref.deref()?.hasRef() ?? false;
+--- a/packages/jest-core/src/runJest.ts
++++ b/packages/jest-core/src/runJest.ts
+@@ -294,7 +294,7 @@
+     ...testSchedulerContext,
+   });
+ 
+-  // @ts-expect-error - second arg is unsupported (but harmless) in Node 14
++  // @ts-ignore - second arg is unsupported (but harmless) in Node 14
+   performance.mark('jest/scheduleAndRun:start', {
+     detail: {numTests: allTests.length},
+   });
+--- a/packages/jest-environment-jsdom/src/index.ts
++++ b/packages/jest-environment-jsdom/src/index.ts
+@@ -73,7 +73,7 @@
+       throw new Error('JSDOM did not return a Window object');
+     }
+ 
+-    // @ts-expect-error - for "universal" code (code should use `globalThis`)
++    // @ts-ignore - for "universal" code (code should use `globalThis`)
+     global.global = global;
+ 
+     // Node's error-message stack size is limited at 10, but it's pretty useful
+--- a/packages/jest-environment-node/src/index.ts
++++ b/packages/jest-environment-node/src/index.ts
+@@ -127,7 +127,7 @@
+       }
+     }
+ 
+-    // @ts-expect-error - Buffer and gc is "missing"
++    // @ts-ignore - Buffer and gc is "missing"
+     global.global = global;
+     global.Buffer = Buffer;
+     global.ArrayBuffer = ArrayBuffer;
+--- a/packages/jest-jasmine2/src/jasmine/jasmineLight.ts
++++ b/packages/jest-jasmine2/src/jasmine/jasmineLight.ts
+@@ -59,10 +59,12 @@
+     enumerable: true,
+     get() {
+       // eslint-disable-next-line no-restricted-globals
++// @ts-ignore
+       return global[testTimeoutSymbol] || createOptions.testTimeout || 5000;
+     },
+     set(value) {
+       // eslint-disable-next-line no-restricted-globals
++// @ts-ignore
+       global[testTimeoutSymbol] = value;
+     },
+   });
+--- a/packages/jest-jasmine2/src/jasmineAsyncInstall.ts
++++ b/packages/jest-jasmine2/src/jasmineAsyncInstall.ts
+@@ -76,6 +76,7 @@
+     // didn't return a promise.
+     const asyncJestLifecycle = function (done: DoneFn) {
+       const wrappedFn = isGeneratorFn(fn) ? co.wrap(fn) : fn;
++// @ts-ignore
+       const returnValue = wrappedFn.call({}, doneFnNoop);
+ 
+       if (isPromise(returnValue)) {
+@@ -195,6 +196,7 @@
+     timeout?: number,
+   ) => Spec,
+   env: Jasmine['currentEnv_'],
++// @ts-ignore
+   mutex: ReturnType<typeof pLimit>,
+ ): Global.ItConcurrentBase {
+   const concurrentFn = function (
+@@ -254,6 +256,7 @@
+   global: Global.Global,
+ ): void {
+   const jasmine = global.jasmine;
++// @ts-ignore
+   const mutex = pLimit(globalConfig.maxConcurrency);
+ 
+   const env = jasmine.getEnv();
+--- a/packages/jest-jasmine2/src/jestExpect.ts
++++ b/packages/jest-jasmine2/src/jestExpect.ts
+@@ -12,10 +12,12 @@
+ 
+ export default function jestExpectAdapter(config: {expand: boolean}): void {
+   // eslint-disable-next-line no-restricted-globals
++// @ts-ignore
+   global.expect = jestExpect;
+   jestExpect.setState({expand: config.expand});
+ 
+   // eslint-disable-next-line no-restricted-globals
++// @ts-ignore
+   const jasmine = global.jasmine;
+   jasmine.anything = jestExpect.anything;
+   jasmine.any = jestExpect.any;
+--- a/packages/jest-leak-detector/src/index.ts
++++ b/packages/jest-leak-detector/src/index.ts
+@@ -52,7 +52,7 @@
+   }
+ 
+   private _runGarbageCollector() {
+-    // @ts-expect-error: not a function on `globalThis`
++    // @ts-ignore: not a function on `globalThis`
+     const isGarbageCollectorHidden = globalThis.gc == null;
+ 
+     // GC is usually hidden, so we have to expose it before running.
+--- a/packages/jest-message-util/src/index.ts
++++ b/packages/jest-message-util/src/index.ts
+@@ -151,10 +151,14 @@
+         : `thrown: ${prettyFormat(error, {maxDepth: 3})}`;
+     if ('cause' in error) {
+       const prefix = '\n\nCause:\n';
++// @ts-ignore
+       if (typeof error.cause === 'string' || typeof error.cause === 'number') {
++// @ts-ignore
+         cause += `${prefix}${error.cause}`;
+       } else if (
++// @ts-ignore
+         types.isNativeError(error.cause) ||
++// @ts-ignore
+         error.cause instanceof Error
+       ) {
+         /* `isNativeError` is used, because the error might come from another realm.
+@@ -163,6 +167,7 @@
+          [verror](https://www.npmjs.com/package/verror) or [axios](https://axios-http.com).
+         */
+         const formatted = formatExecError(
++// @ts-ignore
+           error.cause,
+           config,
+           options,
+@@ -173,7 +178,9 @@
+         cause += `${prefix}${formatted}`;
+       }
+     }
++// @ts-ignore
+     if ('errors' in error && Array.isArray(error.errors)) {
++// @ts-ignore
+       for (const subError of error.errors) {
+         subErrors.push(
+           formatExecError(
+@@ -393,8 +400,11 @@
+   return (
+     typeof errorOrStack !== 'string' &&
+     'cause' in errorOrStack &&
++// @ts-ignore
+     (typeof errorOrStack.cause === 'string' ||
++// @ts-ignore
+       types.isNativeError(errorOrStack.cause) ||
++// @ts-ignore
+       errorOrStack.cause instanceof Error)
+   );
+ }
+@@ -446,9 +456,12 @@
+   if (
+     typeof failureDetails === 'object' &&
+     'error' in failureDetails &&
++// @ts-ignore
+     (types.isNativeError(failureDetails.error) ||
++// @ts-ignore
+       failureDetails.error instanceof Error)
+   ) {
++// @ts-ignore
+     return failureDetails.error; // receiving instances of FailedAssertion for jest-jasmine
+   }
+   return content;
+--- a/packages/jest-mock/src/index.ts
++++ b/packages/jest-mock/src/index.ts
+@@ -999,7 +999,9 @@
+       if (
+         'object' in restore &&
+         'property' in restore &&
++// @ts-ignore
+         restore.object === object &&
++// @ts-ignore
+         restore.property === propertyKey
+       ) {
+         return restore as ReplacedPropertyRestorer<T, K>;
+--- a/packages/jest-reporters/src/CoverageReporter.ts
++++ b/packages/jest-reporters/src/CoverageReporter.ts
+@@ -147,6 +147,7 @@
+       worker = require('./CoverageWorker');
+     } else {
+       worker = new Worker(require.resolve('./CoverageWorker'), {
++// @ts-ignore
+         enableWorkerThreads: this._globalConfig.workerThreads,
+         exposedMethods: ['worker'],
+         forkOptions: {serialization: 'json'},
+@@ -460,6 +461,7 @@
+           const converter = v8toIstanbul(
+             res.url,
+             fileTransform?.wrapperLength ?? 0,
++// @ts-ignore
+             fileTransform && sourcemapContent
+               ? {
+                   originalSource: fileTransform.originalCode,
+--- a/packages/jest-reporters/src/Status.ts
++++ b/packages/jest-reporters/src/Status.ts
+@@ -184,7 +184,9 @@
+         currentTestCases: this._currentTestCases,
+         estimatedTime: this._estimatedTime,
+         roundTime: true,
++// @ts-ignore
+         seed: this._globalConfig.seed,
++// @ts-ignore
+         showSeed: this._globalConfig.showSeed,
+         width,
+       })}`;
+--- a/packages/jest-reporters/src/SummaryReporter.ts
++++ b/packages/jest-reporters/src/SummaryReporter.ts
+@@ -125,7 +125,9 @@
+ 
+       let message = getSummary(aggregatedResults, {
+         estimatedTime: this._estimatedTime,
++// @ts-ignore
+         seed: this._globalConfig.seed,
++// @ts-ignore
+         showSeed: this._globalConfig.showSeed,
+       });
+ 
+--- a/packages/jest-reporters/src/types.ts
++++ b/packages/jest-reporters/src/types.ts
+@@ -36,6 +36,7 @@
+    */
+   readonly onTestCaseStart?: (
+     test: Test,
++// @ts-ignore
+     testCaseStartInfo: Circus.TestCaseStartInfo,
+   ) => Promise<void> | void;
+   readonly onTestCaseResult?: (
+--- a/packages/jest-resolve/src/fileWalkers.ts
++++ b/packages/jest-resolve/src/fileWalkers.ts
+@@ -30,7 +30,7 @@
+ 
+   let stat;
+   try {
+-    // @ts-expect-error TS2554 - throwIfNoEntry is only available in recent version of node, but inclusion of the option is a backward compatible no-op.
++    // @ts-ignore TS2554 - throwIfNoEntry is only available in recent version of node, but inclusion of the option is a backward compatible no-op.
+     stat = fs.statSync(path, {throwIfNoEntry: false});
+   } catch (e: any) {
+     if (!(e && (e.code === 'ENOENT' || e.code === 'ENOTDIR'))) {
+--- a/packages/jest-runner/src/index.ts
++++ b/packages/jest-runner/src/index.ts
+@@ -54,6 +54,7 @@
+ 
+   async #createInBandTestRun(tests: Array<Test>, watcher: TestWatcher) {
+     process.env.JEST_WORKER_ID = '1';
++// @ts-ignore
+     const mutex = pLimit(1);
+     return tests.reduce(
+       (promise, test) =>
+@@ -122,6 +123,7 @@
+     if (worker.getStdout()) worker.getStdout().pipe(process.stdout);
+     if (worker.getStderr()) worker.getStderr().pipe(process.stderr);
+ 
++// @ts-ignore
+     const mutex = pLimit(this._globalConfig.maxWorkers);
+ 
+     // Send test suites to workers continuously instead of all at once to track
+@@ -170,8 +172,10 @@
+     const runAllTests = Promise.all(
+       tests.map(test =>
+         runTestInWorker(test).then(
++// @ts-ignore
+           result =>
+             this.#eventEmitter.emit('test-file-success', [test, result]),
++// @ts-ignore
+           error => this.#eventEmitter.emit('test-file-failure', [test, error]),
+         ),
+       ),
+--- a/packages/jest-runner/src/runTest.ts
++++ b/packages/jest-runner/src/runTest.ts
+@@ -353,7 +353,7 @@
+     }
+ 
+     if (globalConfig.logHeapUsage) {
+-      // @ts-expect-error - doesn't exist on globalThis
++      // @ts-ignore - doesn't exist on globalThis
+       globalThis.gc?.();
+ 
+       result.memoryUsage = process.memoryUsage().heapUsed;
+--- a/packages/jest-runtime/src/index.ts
++++ b/packages/jest-runtime/src/index.ts
+@@ -925,6 +925,7 @@
+     // We must register the pre-allocated module object first so that any
+     // circular dependencies that may arise while evaluating the module can
+     // be satisfied.
++// @ts-ignore
+     const localModule: InitialModule = {
+       children: [],
+       exports: {},
+@@ -954,7 +955,9 @@
+ 
+   requireInternalModule<T = unknown>(from: string, to?: string): T {
+     if (to) {
++// @ts-ignore
+       const require = (
++// @ts-ignore
+         nativeModule.createRequire ?? nativeModule.createRequireFromPath
+       )(from);
+       if (INTERNAL_MODULE_REQUIRE_OUTSIDE_OPTIMIZED_MODULES.has(to)) {
+@@ -1036,7 +1039,9 @@
+         modulePath = potentialManualMock;
+       }
+     }
++// @ts-ignore
+     if (isManualMock) {
++// @ts-ignore
+       const localModule: InitialModule = {
+         children: [],
+         exports: {},
+@@ -1786,6 +1791,7 @@
+         throw error;
+       }
+ 
++// @ts-ignore
+       return this._createRequireImplementation({
+         children: [],
+         exports: {},
+@@ -1810,6 +1816,7 @@
+       Module.createRequire = createRequire;
+     }
+     if ('createRequireFromPath' in nativeModule) {
++// @ts-ignore
+       Module.createRequireFromPath = function createRequireFromPath(
+         filename: string | URL,
+       ) {
+--- a/packages/jest-snapshot/src/printSnapshot.ts
++++ b/packages/jest-snapshot/src/printSnapshot.ts
+@@ -27,6 +27,7 @@
+   RECEIVED_COLOR,
+   getLabelPrinter,
+   matcherHint,
++// @ts-ignore
+   replaceMatchedToAsymmetricMatcher,
+ } from 'jest-matcher-utils';
+ import {format as prettyFormat} from 'pretty-format';
+--- a/packages/jest-snapshot/src/utils.ts
++++ b/packages/jest-snapshot/src/utils.ts
+@@ -222,6 +222,7 @@
+ 
+ const isAnyOrAnything = (input: object) =>
+   '$$typeof' in input &&
++// @ts-ignore
+   input.$$typeof === Symbol.for('jest.asymmetricMatcher') &&
+   ['Any', 'Anything'].includes(input.constructor.name);
+ 
+--- a/packages/jest-test-result/src/types.ts
++++ b/packages/jest-test-result/src/types.ts
+@@ -197,6 +197,7 @@
+   'test-file-start': [Test];
+   'test-file-success': [Test, TestResult];
+   'test-file-failure': [Test, SerializableError];
++// @ts-ignore
+   'test-case-start': [string, Circus.TestCaseStartInfo];
+   'test-case-result': [string, AssertionResult];
+ };
+--- a/packages/jest-validate/src/validateCLIOptions.ts
++++ b/packages/jest-validate/src/validateCLIOptions.ts
+@@ -77,6 +77,7 @@
+   );
+   const unrecognizedOptions = Object.keys(argv).filter(
+     arg =>
++// @ts-ignore
+       !allowedOptions.has(camelcase(arg, {locale: 'en-US'})) &&
+       !allowedOptions.has(arg) &&
+       (!rawArgv.length || rawArgv.includes(arg)),
+--- a/packages/jest-worker/src/workers/ChildProcessWorker.ts
++++ b/packages/jest-worker/src/workers/ChildProcessWorker.ts
+@@ -486,6 +486,7 @@
+    * @returns Process id.
+    */
+   getWorkerSystemId(): number {
++// @ts-ignore
+     return this._child.pid;
+   }
+ 
+--- a/packages/test-utils/src/alignedAnsiStyleSerializer.ts
++++ b/packages/test-utils/src/alignedAnsiStyleSerializer.ts
+@@ -14,29 +14,43 @@
+     // Return the string itself, not escaped nor enclosed in double quote marks.
+     return val.replace(ansiRegex(), match => {
+       switch (match) {
++// @ts-ignore
+         case style.inverse.open:
+           return '<i>';
++// @ts-ignore
+         case style.inverse.close:
+           return '</i>';
+ 
++// @ts-ignore
+         case style.bold.open:
+           return '<b>';
++// @ts-ignore
+         case style.dim.open:
+           return '<d>';
++// @ts-ignore
+         case style.green.open:
+           return '<g>';
++// @ts-ignore
+         case style.red.open:
+           return '<r>';
++// @ts-ignore
+         case style.yellow.open:
+           return '<y>';
++// @ts-ignore
+         case style.bgYellow.open:
+           return '<Y>';
+ 
++// @ts-ignore
+         case style.bold.close:
++// @ts-ignore
+         case style.dim.close:
++// @ts-ignore
+         case style.green.close:
++// @ts-ignore
+         case style.red.close:
++// @ts-ignore
+         case style.yellow.close:
++// @ts-ignore
+         case style.bgYellow.close:
+           return '</>';
+ 
+--- a/tsconfig.json
++++ b/tsconfig.json
+@@ -20,12 +20,9 @@
+     "noFallthroughCasesInSwitch": true,
+ 
+     /* This needs to be false so our types are possible to consume without setting this */
+-    "esModuleInterop": false,
++    "esModuleInterop": true,
+     "isolatedModules": true,
+     "skipLibCheck": false,
+-    "resolveJsonModule": true,
+-
+-    // TODO: remove for Jest 30
+-    "ignoreDeprecations": "5.0"
++    "resolveJsonModule": true
+   }
+ }

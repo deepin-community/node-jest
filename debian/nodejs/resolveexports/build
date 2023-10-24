@@ -1,0 +1,2 @@
+rollup -p @rollup/plugin-typescript -o dist/index.mjs -f es src/index.ts
+rollup -p @rollup/plugin-typescript -o dist/index.js -f cjs src/index.ts

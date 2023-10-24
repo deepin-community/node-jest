@@ -1,0 +1,5 @@
+{
+	"name": "@types/chalk",
+	"license": "MIT",
+	"types": "index.d.ts"
+}

@@ -1,0 +1,39 @@
+Description: disable prettier
+Author: Yadd <yadd@debian.org>
+Forwarded: not-needed
+Last-Update: 2022-04-27
+
+--- a/scripts/build.mjs
++++ b/scripts/build.mjs
+@@ -24,7 +24,6 @@
+ import glob from 'glob';
+ import fs from 'graceful-fs';
+ import micromatch from 'micromatch';
+-import prettier from 'prettier';
+ import transformOptions from '../babel.config.js';
+ import {
+   OK,
+@@ -42,12 +41,6 @@
+ const INLINE_REQUIRE_EXCLUDE_LIST =
+   /packages\/expect|(jest-(circus|diff|get-type|jasmine2|matcher-utils|message-util|regex-util|snapshot))|pretty-format\//;
+ 
+-const prettierConfig = prettier.resolveConfig.sync(
+-  fileURLToPath(import.meta.url),
+-);
+-prettierConfig.trailingComma = 'none';
+-prettierConfig.parser = 'babel';
+-
+ function getPackageName(file) {
+   return path.relative(PACKAGES_DIR, file).split(path.sep)[0];
+ }
+@@ -131,9 +124,8 @@
+     }
+ 
+     const transformed = babel.transformFileSync(file, options).code;
+-    const prettyCode = prettier.format(transformed, prettierConfig);
+ 
+-    fs.writeFileSync(destPath, prettyCode);
++    fs.writeFileSync(destPath, transformed);
+ 
+     silent ||
+       process.stdout.write(

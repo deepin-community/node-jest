@@ -1,0 +1,6 @@
+{
+  "name": "@types/jest__schemas",
+  "license": "MIT",
+  "main": "",
+  "types": "index.d.ts"
+}

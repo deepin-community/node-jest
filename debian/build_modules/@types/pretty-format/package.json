@@ -1,0 +1,6 @@
+{
+  "name": "@types/pretty-format",
+  "license": "MIT",
+  "main": "",
+  "types": "index.d.ts"
+}

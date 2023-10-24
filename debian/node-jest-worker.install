@@ -1,0 +1,4 @@
+usr/share/nodejs/@jest/schemas
+usr/share/nodejs/@jest/types
+usr/share/nodejs/jest-util
+usr/share/nodejs/jest-worker

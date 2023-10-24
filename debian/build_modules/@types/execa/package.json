@@ -1,0 +1,5 @@
+{
+	"name": "@types/execa",
+	"license": "MIT",
+	"types": "index.d.ts"
+}

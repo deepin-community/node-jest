@@ -1,0 +1,27 @@
+# Data
+very-long-line-length-in-source-file *debian/build_modules/incident/index.js*
+very-long-line-length-in-source-file *debian/build_modules/incident/types.js*
+
+# Source-map data
+very-long-line-length-in-source-file *debian/build_modules/incident/incident.js*
+very-long-line-length-in-source-file *debian/build_modules/incident/incident.mjs*
+
+# Test data
+very-long-line-length-in-source-file *e2e/bad-source-map/__tests__/badSourceMap.js.map*
+very-long-line-length-in-source-file *packages/*/src/__tests__/*.map*
+very-long-line-length-in-source-file *packages/*/src/__tests__/*.snap*
+very-long-line-length-in-source-file *packages/pretty-format/perf/world.geo.json*
+
+# Source maps
+source-is-missing [*debian/build_modules/incident/*.js*]
+source-contains-prebuilt-javascript-object [*debian/build_modules/incident/*.js*]
+very-long-line-length-in-source-file *debian/build_modules/incident/*.js*
+
+# False positive
+very-long-line-length-in-source-file *.github/ISSUE_TEMPLATE/bug.yml*
+very-long-line-length-in-source-file *.md*
+very-long-line-length-in-source-file *debian/build_modules/incident/index.mjs*
+very-long-line-length-in-source-file *debian/build_modules/incident/types.mjs*
+
+# All declared using types-*/*
+add-component-copyright types-*

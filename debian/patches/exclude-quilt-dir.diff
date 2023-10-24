@@ -1,0 +1,45 @@
+Description: exclude quilt dir (.pc/)
+Author: Yadd <yadd@debian.org>
+Forwarded: not-needed
+Last-Update: 2020-11-26
+
+--- a/packages/jest-config/src/Defaults.ts
++++ b/packages/jest-config/src/Defaults.ts
+@@ -56,7 +56,7 @@
+     'node',
+   ],
+   moduleNameMapper: {},
+-  modulePathIgnorePatterns: [],
++  modulePathIgnorePatterns: ['<rootDir>/.pc/'],
+   noStackTrace: false,
+   notify: false,
+   notifyMode: 'failure-change',
+@@ -80,7 +80,7 @@
+   testFailureExitCode: 1,
+   testLocationInResults: false,
+   testMatch: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[tj]s?(x)'],
+-  testPathIgnorePatterns: [NODE_MODULES_REGEXP],
++  testPathIgnorePatterns: [NODE_MODULES_REGEXP, '\\.pc/'],
+   testRegex: [],
+   testRunner: 'jest-circus/runner',
+   testSequencer: '@jest/test-sequencer',
+--- a/packages/jest-config/src/ValidConfig.ts
++++ b/packages/jest-config/src/ValidConfig.ts
+@@ -109,7 +109,7 @@
+   moduleNameMapper: {
+     '^React$': '<rootDir>/node_modules/react',
+   },
+-  modulePathIgnorePatterns: ['<rootDir>/build/'],
++  modulePathIgnorePatterns: ['<rootDir>/build/','<rootDir>/.pc/'],
+   modulePaths: ['/shared/vendor/modules'],
+   noStackTrace: false,
+   notify: false,
+@@ -156,7 +156,7 @@
+   testLocationInResults: false,
+   testMatch: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'],
+   testNamePattern: 'test signature',
+-  testPathIgnorePatterns: [NODE_MODULES_REGEXP],
++  testPathIgnorePatterns: [NODE_MODULES_REGEXP, '\\.pc/'],
+   testRegex: multipleValidOptions(
+     '(/__tests__/.*|(\\.|/)(test|spec))\\.[jt]sx?$',
+     ['/__tests__/\\.test\\.[jt]sx?$', '/__tests__/\\.spec\\.[jt]sx?$'],

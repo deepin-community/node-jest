@@ -1,0 +1,6 @@
+{
+  "name": "@types/jest-resolve",
+  "license": "MIT",
+  "main": "",
+  "types": "index.d.ts"
+}
